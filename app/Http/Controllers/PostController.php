@@ -13,7 +13,16 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate();
+        $posts = Post::latest()->paginate();
+        return view('posts.index', compact('posts'));
+    }
+
+    /**
+     * Display a listing of the deleted resource.
+     */
+    public function deleted()
+    {
+        $posts = Post::onlyTrashed()->latest()->paginate();
         return view('posts.index', compact('posts'));
     }
 
@@ -30,7 +39,9 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        dd($request->all());
+        $post = new Post($request->validated());
+        $post->save();
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -46,7 +57,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -54,14 +65,36 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        $post->update($request->validated());
+        return redirect()->route('posts.index');
+    }
+
+    /**
+     * Soft delete the specified resource from storage.
+     */
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        return redirect()->route('posts.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function permaDestroy($post)
     {
-        //
+        $post = Post::onlyTrashed()->findOrFail($post);
+        $post->forceDelete();
+        return redirect()->route('posts.index');
+    }
+
+    /**
+     * Restore soft deleted resource.
+     */
+    public function restore($post)
+    {
+        $post = Post::onlyTrashed()->findOrFail($post);
+        $post->restore();
+        return redirect()->route('posts.index');
     }
 }
