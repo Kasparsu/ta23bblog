@@ -9,5 +9,10 @@ services:
       - ta23bblogdata:/var/lib/mysql
     ports:
       - 33061:3306
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
 volumes:
   ta23bblogdata:
