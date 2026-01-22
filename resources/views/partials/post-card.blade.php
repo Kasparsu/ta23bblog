@@ -13,7 +13,9 @@
         @else
             <p>{{ $post->snippet }}</p>
         @endif
-        <div class="text-base-content/70">{{ $post->user->name }}</div>
+        <div class="text-base-content/70">
+            <a href="{{route('user', $post->user)}}">{{ $post->user->name }}</a>
+        </div>
         <div class="text-base-content/70"><b>Comments: </b>{{ $post->comments_count }}</div>
         <div class="text-base-content/70"><b>Likes: </b>{{ $post->likes_count }}</div>
         <div>
