@@ -44,4 +44,8 @@ class Post extends Model
             return $this->likes()->where('user_id', auth()->id())->exists();
         });
     }
+
+    public function tags() {
+        return $this->belongsToMany(Tag::class);
+    }
 }
