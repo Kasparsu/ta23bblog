@@ -33,4 +33,15 @@ class Post extends Model
     public function comments() {
         return $this->hasMany(Comment::class);
     }
+
+    public function likes() {
+        return $this->hasMany(Like::class);
+    }
+
+    protected function authHasLiked(): Attribute {
+        return Attribute::get(function (){
+            if(!auth()->check()) return false;
+            return $this->likes()->where('user_id', auth()->id())->exists();
+        });
+    }
 }

@@ -27,6 +27,8 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/admin/posts', PostController::class);
 
+    Route::get('/post/{post}/like', [PublicController::class, 'like'])->name('post.like');
+
     Route::get('/secure', [PublicController::class, 'secure'])->middleware('password.confirm')->name('secure');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
