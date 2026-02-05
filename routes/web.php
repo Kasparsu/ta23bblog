@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/admin/posts', PostController::class);
 
     Route::get('/post/{post}/like', [PublicController::class, 'like'])->name('post.like');
+    Route::get('/user/{user}/follow', [PublicController::class, 'follow'])->name('follow');
 
     Route::get('/secure', [PublicController::class, 'secure'])->middleware('password.confirm')->name('secure');
 

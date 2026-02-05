@@ -11,22 +11,26 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PublicController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $posts = Post::with('user')->withCount('comments', 'likes')->latest()->simplePaginate(16);
         return view('welcome', compact('posts'));
     }
 
-    public function post(Post $post){
+    public function post(Post $post)
+    {
         return view('post', compact('post'));
     }
 
-    public function secure(){
+    public function secure()
+    {
         return view('secure');
     }
 
-    public function like(Post $post){
+    public function like(Post $post)
+    {
         $like = $post->likes()->where('user_id', auth()->id())->first();
-        if($like){
+        if ($like) {
             $like->delete();
         } else {
             $like = new Like();
@@ -37,13 +41,28 @@ class PublicController extends Controller
         return redirect()->back();
     }
 
-    public function user(User $user){
+    public function user(User $user)
+    {
         $posts = $user->posts()->with('user')->withCount('comments', 'likes')->latest()->simplePaginate(16);
+        return view('user', compact('posts', 'user'));
+    }
+
+    public function category(Category $category)
+    {
+        $posts = $category->posts()->with('user')->withCount('comments', 'likes')->latest()->simplePaginate(16);
         return view('welcome', compact('posts'));
     }
 
-    public function category(Category $category){
-        $posts = $category->posts()->with('user')->withCount('comments', 'likes')->latest()->simplePaginate(16);
-        return view('welcome', compact('posts'));
+    public function follow(User $user)
+    {
+        if ($user->id !== auth()->id()) {
+            $follower = $user->followers()->where('follower_id', auth()->id())->first();
+            if ($follower) {
+                $user->followers()->detach($follower);
+            } else {
+                $user->followers()->attach(auth()->user());
+            }
+        }
+        return redirect()->back();
     }
 }
